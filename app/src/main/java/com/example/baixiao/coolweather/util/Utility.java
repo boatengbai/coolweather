@@ -1,10 +1,13 @@
 package com.example.baixiao.coolweather.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.example.baixiao.coolweather.db.City;
 import com.example.baixiao.coolweather.db.County;
 import com.example.baixiao.coolweather.db.Province;
+import com.example.baixiao.coolweather.gson.Weather;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +20,7 @@ import java.io.IOException;
  */
 
 public class Utility {
+    //处理省数据
     public static boolean handleProvinceResponse(String response){
         if (!TextUtils.isEmpty(response)){
             try {
@@ -35,7 +39,7 @@ public class Utility {
         }
         return false;
     }
-
+    //处理市数据
     public static boolean handleCityResponse(String response,int provinceId){
         if(!TextUtils.isEmpty(response)){
             try {
@@ -55,7 +59,7 @@ public class Utility {
         }
         return false;
     }
-
+    //处理县数据
     public static boolean handleCountyResponse(String response,int cityId){
         if(!TextUtils.isEmpty(response)){
             try {
@@ -74,5 +78,20 @@ public class Utility {
             }
         }
         return false;
+    }
+    //处理天气数据
+    public static Weather handleWeatherResponse(String response){
+        try {
+            JSONObject weatherObject =new JSONObject(response);
+            JSONArray weatherArray = weatherObject.getJSONArray("HeWeather");
+            String weatherContent = weatherArray.getJSONObject(0).toString();
+            Weather weather = new Weather();
+            weather = new Gson().fromJson(weatherContent,Weather.class);
+            return weather;
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("wrong", "handleWeatherResponse: ");
+        }
+        return null;
     }
 }
